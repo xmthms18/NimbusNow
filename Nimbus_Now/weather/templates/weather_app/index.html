@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
 <body>
+  {% include 'weather_app/header.html' %}
+
+  {% include 'registration/nav.html' %}
   
     <form method="post">
         {% csrf_token %}
@@ -40,7 +43,7 @@
         {% endif %}
       </div>
 
-      
+
       <script>
         const saveButtons = document.querySelectorAll('.save-button');
         saveButtons.forEach(button => {
