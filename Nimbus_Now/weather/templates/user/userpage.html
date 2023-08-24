@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <h2>Your Saved Weather Data</h2>
+    <ul>
+        {% for saved_weather in saved_weather_list %}
+            <li>
+                {{ saved_weather.city_name }} - {{ saved_weather.temperature }}°F
+                <a href="{% url 'delete_saved_weather' saved_weather.id %}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
