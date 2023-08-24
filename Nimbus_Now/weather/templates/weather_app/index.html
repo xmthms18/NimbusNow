@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
 <body>
+  
     <form method="post">
         {% csrf_token %}
         <input type="text" name="city1" placeholder="City 1">
@@ -19,13 +20,54 @@
         {% if weather_data1 %}
           <div class="city-container">
             {% include 'weather_app/city_weather.html' with weather_data=weather_data1 daily_forecasts=daily_forecasts1 %}
+            <button class="save-button"
+                    data-city="{{ weather_data1.city }}"
+                    data-temperature="{{ weather_data1.temperature }}"
+                    data-description="{{ weather_data1.description }}"
+                    data-icon="{{ weather_data1.icon }}">Save</button>
+
           </div>
         {% endif %}
         {% if weather_data2 %}
           <div class="city-container">
             {% include 'weather_app/city_weather.html' with weather_data=weather_data2 daily_forecasts=daily_forecasts2 %}
+            <button class="save-button"
+                    data-city="{{ weather_data2.city }}"
+                    data-temperature="{{ weather_data2.temperature }}"
+                    data-description="{{ weather_data2.description }}"
+                    data-icon="{{ weather_data2.icon }}">Save</button>
           </div>
         {% endif %}
       </div>
+
+      
+      <script>
+        const saveButtons = document.querySelectorAll('.save-button');
+        saveButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const city = button.getAttribute('data-city');
+                const temperature = button.getAttribute('data-temperature');
+                const description = button.getAttribute('data-description');
+                const icon = button.getAttribute('data-icon');
+                
+                // Send AJAX request to save_weather_data view
+                fetch('/save_weather_data/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: `city=${city}&temperature=${temperature}&description=${description}&icon=${icon}`,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                })
+                .catch(error => {
+                    console.error('An error occurred:', error);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
