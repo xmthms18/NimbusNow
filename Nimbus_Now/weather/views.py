@@ -1,10 +1,49 @@
 import datetime
 import requests
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render #redirect
+from django.contrib.auth.forms import UserCreationForm
+from .models import SavedWeatherData
+from django.http import JsonResponse
 
-from django.shortcuts import render
 
 # Create your views here.
+#def signup_view(request):
+    #if request.method == 'POST':
+       # form = UserCreationForm(request.POST)
+       # if form.is_valid():
+           # form.save()
+            #return redirect('login')
+    #else:
+        #form = UserCreationForm()
+    #return render(request, 'registration/signup.html', {'form': form})
 
+
+
+
+def save_weather_data(request):
+    if request.method == 'POST':
+        city = request.POST.get('city')
+        temperature = float(request.POST.get('temperature'))
+        description = request.POST.get('description')
+        icon = request.POST.get('icon')
+
+        # Save weather data for the current user
+        SavedWeatherData.objects.create(
+            user=request.user,
+            city=city,
+            temperature=temperature,
+            description=description,
+            icon=icon
+        )
+
+        return JsonResponse({'message': 'Weather data saved successfully.'})
+
+    return JsonResponse({'message': 'Invalid request.'}, status=400)
+
+
+
+#@login_required
 def index(request):
     API_KEY = "ea176ef47b541be3c93f392589821086"
     current_weather_url = 'https://api.openweathermap.org/data/2.5/weather?q={}&appid={}&units=imperial'
