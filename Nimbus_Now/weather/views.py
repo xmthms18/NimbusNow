@@ -1,6 +1,7 @@
-from django.shortcuts import render
-import requests
 import datetime
+import requests
+
+from django.shortcuts import render
 
 # Create your views here.
 
@@ -11,14 +12,15 @@ def index(request):
 
     if request.method == 'POST':
         city1 = request.POST['city1']
-        city2 = request.POST.get('city2', None)
+        city2 = request.GET('city2', None)
 
-        weather_data1, daily_forecasts1 = fetch_weather_and_forecast(city1, api_key, current_weather_url, forecast_url)
+        weather_data1, daily_forecasts1 = fetch_weather_and_forecast(city1, API_KEY, current_weather_url, forecast_url)
 
         if city2:
-            weather_data2, daily_forecasts2 = fetch_weather_and_forecast(city2, api_key, current_weather_url,
-                                                                         forecast_url)
+            weather_data2, daily_forecasts2 = fetch_weather_and_forecast(city2, API_KEY, current_weather_url,forecast_url)
+
         else:
+
             weather_data2, daily_forecasts2 = None, None
 
         context = {
@@ -32,7 +34,7 @@ def index(request):
     else:
         return render(request, 'weather_app/index.html')
     
-    def fetch_weather_and_forecast(city, api_key, current_weather_url, forecast_url):
+def fetch_weather_and_forecast(city, api_key, current_weather_url, forecast_url):
       response = requests.get(current_weather_url.format(city, api_key)).json()
       lat, lon = response['coord']['lat'], response['coord']['lon']
       forecast_response = requests.get(forecast_url.format(lat, lon, api_key)).json()
